@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tezkor Klaviatura — typing.ganisher.uz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EAECF3; --bg2:#F4F5FA; --surface:#FFFFFF;
+  --keycap:#FBFBFD; --keycap-edge:#D5D9E6; --keycap-shadow:#BFC5D6;
+  --ink:#15172B; --muted:#6A7088; --line:#E5E8F0;
+  --primary:#4F46E5; --primary-soft:#EEF0FF;
+  --accent:#F97316; --success:#1FA97A; --error:#E5484D;
+  --f0:#F9A8D4; --f1:#C4B5FD; --f2:#93C5FD; --f3:#6EE7B7;
+  --f4:#FCD34D; --f5:#FDBA74; --f6:#F0ABFC; --f7:#FCA5A5;
+  --r:14px; --shadow:0 1px 2px rgba(20,23,43,.06),0 8px 24px rgba(20,23,43,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Inter",system-ui,sans-serif; color:var(--ink);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, #fff 0%, transparent 60%),
+    linear-gradient(180deg,var(--bg2),var(--bg));
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.display{font-family:"Space Grotesk",sans-serif;letter-spacing:-.01em}
+button{font-family:inherit;cursor:pointer;border:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* ---- Top bar ---- */
+header{position:sticky;top:0;z-index:30;background:rgba(244,245,250,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:16px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-family:"Space Grotesk";font-weight:700;font-size:18px}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:"JetBrains Mono";font-weight:700;box-shadow:0 2px 0 var(--keycap-shadow)}
+.nav{display:flex;gap:4px;margin-left:8px;flex-wrap:wrap}
+.nav button{background:transparent;color:var(--muted);font-weight:600;font-size:14px;padding:8px 12px;border-radius:9px}
+.nav button.active{background:var(--primary-soft);color:var(--primary)}
+.nav button:hover{color:var(--ink)}
+.spacer{flex:1}
+.lang{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.lang button{background:transparent;padding:7px 11px;font-weight:600;font-size:13px;color:var(--muted)}
+.lang button.active{background:var(--ink);color:#fff}
+.points{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-weight:700;font-size:14px}
+.points b{color:var(--accent)}
+
+/* ---- Views ---- */
+.view{display:none;padding:34px 0 70px}
+.view.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.eyebrow{font-family:"JetBrains Mono";font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);font-weight:500}
+.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.05;margin:10px 0 12px}
+.hero p{color:var(--muted);font-size:17px;max-width:560px;margin:0 0 22px;line-height:1.55}
+.cta{display:inline-flex;align-items:center;gap:9px;background:var(--primary);color:#fff;font-weight:600;font-size:15px;padding:13px 22px;border-radius:12px;box-shadow:0 3px 0 #3a32c4,0 8px 22px rgba(79,70,229,.28);transition:.12s}
+.cta:hover{transform:translateY(-1px)}
+.cta:active{transform:translateY(2px);box-shadow:0 1px 0 #3a32c4}
+.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:none;font-weight:600;padding:13px 20px;border-radius:12px}
+
+.grid{display:grid;gap:16px}
+.cards{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:30px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 6px;font-size:17px}
+.card p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.kico{width:40px;height:40px;border-radius:11px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;margin-bottom:14px;font-size:20px}
+
+/* ---- Typing card ---- */
+.lessonbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.chip{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 13px;font-size:13px;font-weight:600;color:var(--muted)}
+.chip.on{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+.chip .done{color:var(--success)}
+.typecard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
+.hud{display:flex;gap:26px;margin-bottom:18px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column}
+.stat .v{font-family:"JetBrains Mono";font-weight:700;font-size:26px;line-height:1}
+.stat .l{font-size:12px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
+.prompt{font-family:"JetBrains Mono";font-size:23px;line-height:1.9;letter-spacing:.5px;padding:8px 2px 16px;user-select:none}
+.prompt span{border-radius:4px;transition:background .05s}
+.prompt .ok{color:#9aa0b4}
+.prompt .bad{color:var(--error);background:#fdecec}
+.prompt .cur{background:var(--primary);color:#fff;box-shadow:0 0 0 2px var(--primary)}
+.prompt .sp.bad{background:#fdecec}
+#hiddenInput{position:absolute;opacity:0;left:-9999px}
+
+/* ---- Keyboard ---- */
+.kb{margin-top:8px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.krow{display:flex;gap:8px}
+.key{
+  min-width:42px;height:46px;padding:0 8px;border-radius:10px;
+  background:linear-gradient(180deg,#fff,var(--keycap));
+  border:1px solid var(--keycap-edge);border-bottom:3px solid var(--keycap-shadow);
+  display:grid;place-items:center;font-family:"JetBrains Mono";font-weight:600;font-size:15px;color:#3a3f55;
+  position:relative;transition:.07s;
+}
+.key.space{min-width:280px}
+.key .fdot{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:18px;height:3px;border-radius:3px;opacity:.85}
+.key.next{background:var(--primary);color:#fff;border-color:#3a32c4;border-bottom-color:#2f29a8;transform:translateY(1px);box-shadow:0 0 0 4px var(--primary-soft)}
+.key.next .fdot{opacity:0}
+.f0{background:var(--f0)} .f1{background:var(--f1)} .f2{background:var(--f2)} .f3{background:var(--f3)}
+.f4{background:var(--f4)} .f5{background:var(--f5)} .f6{background:var(--f6)} .f7{background:var(--f7)}
+.kbhint{color:var(--muted);font-size:12.5px;margin-top:10px;text-align:center}
+
+/* ---- Result / before-after ---- */
+.result{text-align:center;padding:10px 0}
+.result .big{font-family:"Space Grotesk";font-size:40px;margin:6px 0}
+.ba{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:22px 0}
+.ba .box{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:16px 22px;min-width:150px}
+.ba .box .t{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.ba .box .n{font-family:"JetBrains Mono";font-weight:700;font-size:30px;margin-top:4px}
+.ba .arrow{display:grid;place-items:center;font-size:26px;color:var(--accent)}
+.delta{color:var(--success);font-weight:700;font-family:"JetBrains Mono"}
+
+/* ---- Tables / leaderboard ---- */
+.tabs{display:flex;gap:6px;margin-bottom:16px}
+.tabs button{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 15px;font-weight:600;font-size:14px;color:var(--muted)}
+.tabs button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+th,td{text-align:left;padding:13px 16px;font-size:14px;border-bottom:1px solid var(--line)}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:none}
+td.num,th.num{font-family:"JetBrains Mono";font-weight:600}
+tr.me{background:var(--primary-soft)}
+.rankbadge{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--bg);font-family:"JetBrains Mono";font-weight:700;font-size:13px}
+.rank1{background:#FEF3C7;color:#B45309}.rank2{background:#E5E7EB;color:#374151}.rank3{background:#FDE2C8;color:#9A3412}
+
+/* ---- Game ---- */
+.gamebox{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow);text-align:center}
+.gword{font-family:"JetBrains Mono";font-weight:700;font-size:38px;margin:18px 0;letter-spacing:1px}
+.ginput{font-family:"JetBrains Mono";font-size:20px;text-align:center;padding:12px 16px;border:2px solid var(--line);border-radius:12px;width:min(360px,90%);outline:none}
+.ginput:focus{border-color:var(--primary)}
+
+/* ---- Admin ---- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px}
+.panel h3{margin:0 0 4px}
+.panel .sub{color:var(--muted);font-size:13.5px;margin:0 0 16px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.inp{flex:1;min-width:180px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;outline:none}
+.inp:focus{border-color:var(--primary)}
+.btn{background:var(--ink);color:#fff;border-radius:10px;padding:11px 16px;font-weight:600;font-size:14px}
+.btn.soft{background:var(--primary-soft);color:var(--primary)}
+.btn.danger{background:#fdecec;color:var(--error)}
+.pill{display:inline-flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:6px 10px 6px 14px;font-size:13.5px;margin:4px 6px 4px 0}
+.pill button{background:transparent;color:var(--muted);font-size:16px;line-height:1;padding:2px}
+.toggle{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600}
+.switch{width:44px;height:26px;border-radius:999px;background:var(--line);position:relative;transition:.15s}
+.switch.on{background:var(--success)}
+.switch i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.15s}
+.switch.on i{left:21px}
+.note{background:var(--primary-soft);border:1px solid #d9ddff;border-radius:12px;padding:14px 16px;font-size:13.5px;color:#3b3a7a;line-height:1.5}
+
+/* ---- Certificate modal ---- */
+.modal{position:fixed;inset:0;background:rgba(21,23,43,.55);display:none;place-items:center;z-index:60;padding:20px}
+.modal.on{display:grid}
+.sheet{background:#fff;border-radius:18px;max-width:680px;width:100%;padding:22px}
+.cert{border:3px solid var(--primary);border-radius:14px;padding:34px;text-align:center;background:linear-gradient(180deg,#fff,#fafbff);position:relative}
+.cert .seal{position:absolute;right:26px;top:26px}
+.cert .ttl{font-family:"Space Grotesk";font-size:13px;letter-spacing:.22em;color:var(--primary);text-transform:uppercase}
+.cert .name{font-family:"Space Grotesk";font-size:34px;margin:14px 0 6px}
+.cert .line{height:1px;background:var(--line);margin:14px auto;width:60%}
+.cert .meta{font-family:"JetBrains Mono";font-size:15px;color:var(--ink)}
+.cert .foot{margin-top:18px;font-size:12px;color:var(--muted)}
+.modal .actions{display:flex;gap:10px;justify-content:center;margin-top:18px}
+
+footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:13px;text-align:center}
+@media(max-width:640px){
+  .bar{height:auto;padding:12px 0;flex-wrap:wrap}
+  .prompt{font-size:19px}.key{min-width:32px;height:40px;font-size:13px}.key.space{min-width:160px}
+  .stat .v{font-size:22px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <div class="brand"><div class="logo">Tz</div> Tezkor Klaviatura</div>
+    <nav class="nav" id="nav">
+      <button data-v="home" class="active">Bosh sahifa</button>
+      <button data-v="learn">Mashqlar</button>
+      <button data-v="game">O'yin</button>
+      <button data-v="board">Reyting</button>
+      <button data-v="profile">Profil</button>
+      <button data-v="admin">Boshqaruv</button>
+    </nav>
+    <div class="spacer"></div>
+    <div class="lang" id="lang">
+      <button data-l="uz" class="active">UZ</button>
+      <button data-l="ru">RU</button>
+      <button data-l="en">EN</button>
+    </div>
+    <div id="auth"></div>
+    <div class="points">★ <b id="ptsTop">0</b></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HOME -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="eyebrow" id="t_eyebrow">10 barmoq · uz / ru / en</div>
+      <h1 id="t_herotitle">Klaviaturani ko'rmasdan yozishni o'rganing</h1>
+      <p id="t_herosub">O'zbek, rus va ingliz tillarida mashq qiling. Har bir mashq uchun ball oling, o'sishingizni "oldin va keyin" ko'rinishida ko'ring va guruh reytingida birinchi bo'ling.</p>
+      <button class="cta" onclick="go('learn')" id="t_startbtn">Mashqni boshlash →</button>
+      <button class="ghost" onclick="go('game')" id="t_gamebtn">O'yinni sinab ko'rish</button>
+    </div>
+    <div class="grid cards" id="homeCards"></div>
+  </section>
+
+  <!-- LEARN -->
+  <section class="view" id="view-learn">
+    <div class="eyebrow" id="t_lessonsmall">Mashqlar</div>
+    <h1 style="margin:8px 0 18px" id="t_lessonh">Darslar</h1>
+    <div class="lessonbar" id="lessonChips"></div>
+    <div class="typecard">
+      <div class="hud">
+        <div class="stat"><div class="v" id="mWpm">0</div><div class="l">WPM</div></div>
+        <div class="stat"><div class="v" id="mAcc">100%</div><div class="l" id="t_acc">Aniqlik</div></div>
+        <div class="stat"><div class="v" id="mTime">0s</div><div class="l" id="t_time">Vaqt</div></div>
+        <div class="stat"><div class="v" id="mProg">0%</div><div class="l" id="t_prog">Bajarildi</div></div>
+      </div>
+      <div class="prompt" id="prompt" tabindex="0"></div>
+      <input id="hiddenInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      <div class="kb" id="kb"></div>
+      <div class="kbhint" id="t_kbhint">Yozishni boshlash uchun shu yerga bosing. Keyingi tugma <b style="color:var(--primary)">ko'k</b> rangda yonadi.</div>
+    </div>
+    <div class="typecard" id="resultCard" style="display:none;margin-top:16px"></div>
+  </section>
+
+  <!-- GAME -->
+  <section class="view" id="view-game">
+    <div class="eyebrow">O'yin</div>
+    <h1 style="margin:8px 0 18px" id="t_gameh">Vaqtga poyga</h1>
+    <div class="gamebox" id="gameBox">
+      <p style="color:var(--muted);margin:0 0 6px" id="t_gamedesc">60 soniyada qancha so'z yoza olasiz? Har bir to'g'ri so'z = ball.</p>
+      <div class="hud" style="justify-content:center">
+        <div class="stat"><div class="v" id="gScore">0</div><div class="l" id="t_words">So'zlar</div></div>
+        <div class="stat"><div class="v" id="gTime">60s</div><div class="l" id="t_time2">Vaqt</div></div>
+      </div>
+      <div class="gword" id="gWord">—</div>
+      <input class="ginput" id="gInput" placeholder="..." disabled />
+      <div style="margin-top:18px"><button class="cta" id="gBtn" onclick="game.start()">Boshlash</button></div>
+    </div>
+  </section>
+
+  <!-- BOARD -->
+  <section class="view" id="view-board">
+    <div class="eyebrow">Reyting</div>
+    <h1 style="margin:8px 0 18px" id="t_boardh">Reyting jadvali</h1>
+    <div class="tabs" id="boardTabs">
+      <button data-b="global" class="active" id="t_global">Global</button>
+      <button data-b="group" id="t_group">Mening guruhim</button>
+    </div>
+    <div id="boardWrap"></div>
+  </section>
+
+  <!-- PROFILE -->
+  <section class="view" id="view-profile">
+    <div class="eyebrow">Profil</div>
+    <h1 style="margin:8px 0 18px" id="t_profh">Mening natijalarim</h1>
+    <div class="grid cards" id="profStats"></div>
+    <div class="typecard" style="margin-top:18px" id="baCard"></div>
+    <div style="margin-top:18px"><button class="cta" id="certBtn" onclick="openCert()">Sertifikatni ochish</button></div>
+  </section>
+
+  <!-- ADMIN -->
+  <section class="view" id="view-admin">
+    <div class="eyebrow">O'qituvchi / Admin</div>
+    <h1 style="margin:8px 0 6px" id="t_adminh">Boshqaruv paneli</h1>
+    <p style="color:var(--muted);margin:0 0 20px" id="t_adminsub">Bu yer o'qituvchi (siz) uchun. Quyidagilar demo ma'lumotda ishlaydi — haqiqiy versiyada Supabase bazasiga ulanadi.</p>
+
+    <div class="panel">
+      <h3 id="t_p1h">1. Ruxsat etilgan emaillar</h3>
+      <p class="sub" id="t_p1s">Faqat shu ro'yxatdagi emaillar Google bilan kira oladi.</p>
+      <div class="row">
+        <input class="inp" id="emailInp" placeholder="oquvchi@gmail.com" />
+        <button class="btn" onclick="admin.addEmail()" id="t_add">Qo'shish</button>
+      </div>
+      <div id="emailList"></div>
+    </div>
+
+    <div class="panel">
+      <h3 id="t_p2h">2. Guruhlar</h3>
+      <p class="sub" id="t_p2s">Guruh oching va o'quvchilarni qo'shing. Guruh reytingini ko'ring.</p>
+      <div class="row">
+        <input class="inp" id="groupInp" placeholder="Guruh nomi (masalan: 9-A sinf)" />
+        <button class="btn" onclick="admin.addGroup()" id="t_creategroup">Guruh ochish</button>
+      </div>
+      <div id="groupList"></div>
+    </div>
+
+    <div class="panel">
+      <h3 id="t_p3h">3. Telegram kunlik hisobot</h3>
+      <p class="sub" id="t_p3s">Bot har kuni guruh reytingini Telegram guruhiga yuboradi va o'quvchilarni belgilaydi.</p>
+      <div class="toggle"><div class="switch" id="tgSwitch" onclick="admin.toggleTg()"><i></i></div> <span id="tgLabel">O'chiq</span></div>
+      <div class="note" style="margin-top:14px" id="t_p3note">Ishlatish: o'quvchi botga bir marta <b>/start</b> bosadi → Telegram ID bog'lanadi → kuniga bir marta reyting <b>@username</b> bilan yuboriladi.</div>
+    </div>
+
+    <div class="panel">
+      <h3 id="t_p4h">4. Eksport</h3>
+      <p class="sub" id="t_p4s">Guruh natijalarini Excel (CSV) faylga yuklab oling.</p>
+      <button class="btn soft" onclick="admin.exportCsv()" id="t_export">CSV yuklab olish</button>
+    </div>
+  </section>
+
+</main>
+
+<footer>typing.ganisher.uz · Tezkor Klaviatura · MVP demo</footer>
+
+<!-- Certificate modal -->
+<div class="modal" id="certModal">
+  <div class="sheet">
+    <div class="cert" id="certEl">
+      <div class="seal"><div id="qr"></div></div>
+      <div class="ttl">Sertifikat · Certificate</div>
+      <div style="color:var(--muted);font-size:13px;margin-top:18px">Bu sertifikat quyidagi shaxsga beriladi</div>
+      <div class="name" id="certName">Foydalanuvchi</div>
+      <div class="line"></div>
+      <div class="meta" id="certMeta">— WPM · —% aniqlik</div>
+      <div class="foot" id="certFoot">typing.ganisher.uz · — · ID: —</div>
+    </div>
+    <div class="actions">
+      <button class="cta" onclick="downloadCert()">PNG yuklab olish</button>
+      <button class="ghost" onclick="document.getElementById('certModal').classList.remove('on')">Yopish</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ============================================================
+   SOZLAMA — Supabase'ga ulash uchun faqat shu uchta qatorni to'ldiring.
+   Bo'sh qoldirsangiz, sayt DEMO holatda ishlayveradi (bitta qurilmada).
+   ============================================================ */
+const CONFIG={
+  url:"",   /* <-- Supabase Project URL (masalan https://abcd.supabase.co) */
+  key:"",   /* <-- Supabase anon public key */
+  admins:["ganisher@gmail.com"]  /* <-- O'zingizning (admin) emailingiz */
+};
+const CLOUD=!!(CONFIG.url && CONFIG.key && window.supabase);
+let sb=CLOUD?window.supabase.createClient(CONFIG.url,CONFIG.key):null;
+let currentUser=null;
+/* ============ Storage (localStorage with in-memory fallback) ============ */
+const Store={mem:{},get(k,d){try{const v=localStorage.getItem(k);if(v!==null)return JSON.parse(v);}catch(e){}return (k in this.mem)?this.mem[k]:d;},set(k,v){this.mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+
+/* ============ i18n ============ */
+const T={
+ uz:{eyebrow:"10 barmoq · uz / ru / en",herotitle:"Klaviaturani ko'rmasdan yozishni o'rganing",herosub:"O'zbek, rus va ingliz tillarida mashq qiling. Har bir mashq uchun ball oling, o'sishingizni \"oldin va keyin\" ko'rinishida ko'ring.",startbtn:"Mashqni boshlash →",gamebtn:"O'yinni sinab ko'rish",lessonh:"Darslar",lessonsmall:"Mashqlar",acc:"Aniqlik",time:"Vaqt",prog:"Bajarildi",kbhint:"Yozishni boshlash uchun shu yerga bosing. Keyingi tugma ko'k rangda yonadi.",gameh:"Vaqtga poyga",gamedesc:"60 soniyada qancha so'z yoza olasiz? Har bir to'g'ri so'z = ball.",words:"So'zlar",boardh:"Reyting jadvali",global:"Global",group:"Mening guruhim",profh:"Mening natijalarim",adminh:"Boshqaruv paneli",finish:"Mashq tugadi!",earned:"ball oldingiz",before:"Boshlanish",after:"Hozir",retry:"Qayta",next:"Keyingi dars",start:"Boshlash",cards:[["⌨️","Jonli klaviatura","Bosish kerak bo'lgan tugma yonadi, barmoq ranglar bilan ko'rsatiladi."],["📈","Oldin va keyin","Birinchi natijangiz saqlanadi, oxirida o'sishni ko'rasiz."],["🏆","Reyting","Guruh va dunyo bo'yicha o'rningizni bilib turing."],["🎓","Sertifikat","Tugatganda QR-kodli sertifikat olasiz."]]},
+ ru:{eyebrow:"10 пальцев · uz / ru / en",herotitle:"Научитесь печатать не глядя на клавиатуру",herosub:"Тренируйтесь на узбекском, русском и английском. Получайте баллы за каждое упражнение и смотрите свой рост «до и после».",startbtn:"Начать упражнение →",gamebtn:"Попробовать игру",lessonh:"Уроки",lessonsmall:"Упражнения",acc:"Точность",time:"Время",prog:"Готово",kbhint:"Нажмите сюда, чтобы печатать. Следующая клавиша подсвечивается синим.",gameh:"Гонка на время",gamedesc:"Сколько слов наберёте за 60 секунд? Каждое верное слово = балл.",words:"Слова",boardh:"Таблица рейтинга",global:"Глобально",group:"Моя группа",profh:"Мои результаты",adminh:"Панель управления",finish:"Упражнение завершено!",earned:"баллов получено",before:"Начало",after:"Сейчас",retry:"Заново",next:"Следующий урок",start:"Старт",cards:[["⌨️","Живая клавиатура","Нужная клавиша подсвечивается, пальцы показаны цветом."],["📈","До и после","Первый результат сохраняется, в конце видно рост."],["🏆","Рейтинг","Знайте своё место в группе и в мире."],["🎓","Сертификат","По завершении — сертификат с QR-кодом."]]},
+ en:{eyebrow:"10 fingers · uz / ru / en",herotitle:"Learn to type without looking at the keyboard",herosub:"Practice in Uzbek, Russian and English. Earn points for every exercise and see your growth in a before/after view.",startbtn:"Start practice →",gamebtn:"Try the game",lessonh:"Lessons",lessonsmall:"Practice",acc:"Accuracy",time:"Time",prog:"Done",kbhint:"Click here to start typing. The next key glows blue.",gameh:"Time race",gamedesc:"How many words can you type in 60 seconds? Each correct word = a point.",words:"Words",boardh:"Leaderboard",global:"Global",group:"My group",profh:"My results",adminh:"Admin panel",finish:"Exercise complete!",earned:"points earned",before:"Start",after:"Now",retry:"Retry",next:"Next lesson",start:"Start",cards:[["⌨️","Live keyboard","The key to press lights up; fingers are color-coded."],["📈","Before & after","Your first result is saved; see your growth at the end."],["🏆","Leaderboard","Know your rank in your group and worldwide."],["🎓","Certificate","Get a QR-coded certificate when you finish."]]}
+};
+
+/* ============ Lessons & words ============ */
+const LESSONS={
+ uz:[{t:"Asosiy qator",x:"asd fgh jkl asd fgh jkl",d:1},
+     {t:"So'zlar",x:"salom dunyo kitob maktab talaba ustoz",d:1.1},
+     {t:"Gap",x:"Bugun ob-havo juda yaxshi va quyoshli.",d:1.2},
+     {t:"Tezlik",x:"Tezkor yozish malakasi mehnat bilan keladi.",d:1.3},
+     {t:"Yakuniy",x:"Har kuni mashq qilsang barmoqlaring klaviaturani topadi.",d:1.5}],
+ ru:[{t:"Основной ряд",x:"фыв апр олд фыв апр олд",d:1},
+     {t:"Слова",x:"привет мир книга школа студент учитель",d:1.1},
+     {t:"Фраза",x:"Сегодня очень хорошая и солнечная погода.",d:1.2},
+     {t:"Скорость",x:"Навык быстрой печати приходит с практикой.",d:1.3},
+     {t:"Финал",x:"Тренируйся каждый день и пальцы сами найдут клавиши.",d:1.5}],
+ en:[{t:"Home row",x:"asdf jkl asdf jkl ghgh",d:1},
+     {t:"Words",x:"hello world book school student teacher",d:1.1},
+     {t:"Phrase",x:"Today the weather is very nice and sunny.",d:1.2},
+     {t:"Speed",x:"Fast typing skill comes with daily practice.",d:1.3},
+     {t:"Final",x:"If you practice every day your fingers find the keys.",d:1.5}]
+};
+const WORDS={
+ uz:["salom","kitob","maktab","talaba","ustoz","dunyo","quyosh","daryo","shahar","kompyuter","klaviatura","mashq","tezlik","aniqlik","barmoq","yozuv","savod","hisob","jadval","tartib"],
+ ru:["привет","книга","школа","студент","учитель","мир","солнце","река","город","компьютер","клавиатура","практика","скорость","точность","палец","запись","счёт","таблица","порядок","знание"],
+ en:["hello","book","school","student","teacher","world","sun","river","city","computer","keyboard","practice","speed","accuracy","finger","record","skill","count","table","order"]
+};
+
+/* ============ Keyboard layouts (with finger zones) ============ */
+const LAT=[
+ [["q",0],["w",1],["e",2],["r",3],["t",3],["y",4],["u",4],["i",5],["o",6],["p",7]],
+ [["a",0],["s",1],["d",2],["f",3],["g",3],["h",4],["j",4],["k",5],["l",6]],
+ [["z",0],["x",1],["c",2],["v",3],["b",3],["n",4],["m",4]]
+];
+const CYR=[
+ [["й",0],["ц",1],["у",2],["к",3],["е",3],["н",4],["г",4],["ш",5],["щ",6],["з",7],["х",7]],
+ [["ф",0],["ы",1],["в",2],["а",3],["п",3],["р",4],["о",4],["л",5],["д",6],["ж",7],["э",7]],
+ [["я",0],["ч",1],["с",2],["м",3],["и",3],["т",4],["ь",4],["б",5],["ю",6]]
+];
+
+/* ============ App state ============ */
+let LANG=Store.get("lang","uz");
+let profile=Store.get("profile",{name:"",points:0,lessonsDone:0,bestWpm:0,sessions:0,accSum:0,baseline:null,latest:null,streak:1});
+let curLesson=Store.get("curLesson",0);
+let admin_state=Store.get("admin",{emails:["ali@gmail.com","vali@gmail.com"],groups:[{name:"9-A sinf",members:["ali@gmail.com","vali@gmail.com"]}],tg:false});
+
+function save(){Store.set("profile",profile);Store.set("curLesson",curLesson);Store.set("lang",LANG);Store.set("admin",admin_state);}
+
+/* ============ Auth (Google + email whitelist) ============ */
+function isAdmin(){return currentUser && CONFIG.admins.map(x=>x.toLowerCase()).includes(currentUser.email.toLowerCase());}
+async function initAuth(){
+  renderAuth();
+  if(!CLOUD)return;
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    if(session)await handleLogin(session.user);
+    sb.auth.onAuthStateChange((_e,s)=>{if(s&&s.user&&(!currentUser||currentUser.id!==s.user.id))handleLogin(s.user);});
+  }catch(e){}
+}
+async function login(){try{await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:window.location.href}});}catch(e){alert("Kirishda xato: "+e.message);}}
+async function logout(){try{await sb.auth.signOut();}catch(e){}currentUser=null;profile.points=0;document.getElementById("ptsTop").textContent=0;renderAuth();}
+async function handleLogin(user){
+  /* whitelist: faqat ruxsat etilgan emaillar */
+  try{
+    const {data}=await sb.from("allowed_emails").select("email").eq("email",user.email.toLowerCase());
+    const allowed=(data&&data.length>0)||CONFIG.admins.map(x=>x.toLowerCase()).includes(user.email.toLowerCase());
+    if(!allowed){alert("Sizning emailingiz ro'yxatga kiritilmagan. O'qituvchingizga murojaat qiling.");await sb.auth.signOut();return;}
+  }catch(e){}
+  currentUser=user;
+  profile.name=(user.user_metadata&&user.user_metadata.full_name)||user.email.split("@")[0];
+  await DB.loadProfile();
+  renderAuth();
+  if(document.getElementById("view-admin").classList.contains("active"))admin.render();
+}
+function renderAuth(){
+  const el=document.getElementById("auth");
+  document.querySelector('#nav button[data-v="admin"]').style.display=(!CLOUD||isAdmin())?"":"none";
+  if(!CLOUD){
+    el.innerHTML=`<input class="inp" style="max-width:140px;padding:8px 11px" placeholder="Ismingiz" value="${profile.name||""}" onchange="profile.name=this.value;save();renderAuth();">`;
+    return;
+  }
+  if(currentUser){
+    el.innerHTML=`<span class="points" style="gap:8px">${currentUser.email.split("@")[0]} <button onclick="logout()" style="background:none;color:var(--muted);font-weight:600">chiqish</button></span>`;
+  }else{
+    el.innerHTML=`<button class="cta" style="padding:9px 15px;box-shadow:none" onclick="login()">Google bilan kirish</button>`;
+  }
+}
+
+/* ============ DB layer (cloud yoki demo) ============ */
+const DB={
+  async loadProfile(){
+    if(!CLOUD||!currentUser)return;
+    try{
+      const {data}=await sb.from("profiles").select("*").eq("id",currentUser.id).maybeSingle();
+      if(data){
+        profile.points=data.points||0;profile.bestWpm=data.best_wpm||0;
+        profile.baseline=data.baseline_wpm?{wpm:data.baseline_wpm,acc:data.baseline_acc}:null;
+        profile.latest=data.latest_wpm?{wpm:data.latest_wpm,acc:data.latest_acc}:null;
+        profile.lessonsDone=data.lessons_done||0;
+        document.getElementById("ptsTop").textContent=profile.points;
+      }
+    }catch(e){}
+  },
+  async pushProfile(){
+    if(!CLOUD||!currentUser){save();return;}
+    save();
+    try{
+      await sb.from("profiles").upsert({id:currentUser.id,email:currentUser.email,name:profile.name,
+        points:profile.points,best_wpm:profile.bestWpm,lessons_done:profile.lessonsDone,
+        baseline_wpm:profile.baseline?profile.baseline.wpm:null,baseline_acc:profile.baseline?profile.baseline.acc:null,
+        latest_wpm:profile.latest?profile.latest.wpm:null,latest_acc:profile.latest?profile.latest.acc:null,
+        updated_at:new Date().toISOString()});
+    }catch(e){}
+  },
+  async saveScore(wpm,acc){
+    await this.pushProfile();
+    if(!CLOUD||!currentUser)return;
+    try{await sb.from("scores").insert({user_id:currentUser.id,wpm,accuracy:acc});}catch(e){}
+  },
+  async leaderboard(scope){
+    if(!CLOUD){
+      const me={n:(profile.name||"Siz"),p:profile.points,me:true};
+      if(scope==="group")return [{n:"Ali",p:340},{n:"Vali",p:280},me];
+      return [...DEMO,me];
+    }
+    try{
+      const {data}=await sb.from("profiles").select("email,name,points").order("points",{ascending:false}).limit(50);
+      return (data||[]).map(d=>({n:d.name||d.email.split("@")[0],p:d.points||0,me:currentUser&&d.email===currentUser.email}));
+    }catch(e){return [];}
+  },
+  async listEmails(){if(!CLOUD)return admin_state.emails;try{const {data}=await sb.from("allowed_emails").select("email").order("email");return (data||[]).map(d=>d.email);}catch(e){return [];}},
+  async addEmail(e){if(!CLOUD){admin_state.emails.push(e);save();return;}try{await sb.from("allowed_emails").insert({email:e.toLowerCase()});}catch(err){alert(err.message);}},
+  async delEmail(e){if(!CLOUD){admin_state.emails=admin_state.emails.filter(x=>x!==e);save();return;}try{await sb.from("allowed_emails").delete().eq("email",e);}catch(err){}},
+  async listGroups(){if(!CLOUD)return admin_state.groups;try{const {data:gs}=await sb.from("groups").select("id,name");const out=[];for(const g of (gs||[])){const {data:ms}=await sb.from("group_members").select("email").eq("group_id",g.id);out.push({id:g.id,name:g.name,members:(ms||[]).map(m=>m.email)});}return out;}catch(e){return [];}},
+  async addGroup(name){if(!CLOUD){admin_state.groups.push({name,members:[]});save();return;}try{await sb.from("groups").insert({name,teacher_email:currentUser?currentUser.email:""});}catch(err){alert(err.message);}},
+  async delGroup(g){if(!CLOUD){admin_state.groups=admin_state.groups.filter(x=>x.name!==g.name);save();return;}try{await sb.from("groups").delete().eq("id",g.id);}catch(err){}},
+  async addMember(g,email){if(!CLOUD){const t=admin_state.groups.find(x=>x.name===g.name);if(t)t.members.push(email);save();return;}try{await sb.from("group_members").insert({group_id:g.id,email:email.toLowerCase()});}catch(err){alert(err.message);}},
+  async delMember(g,email){if(!CLOUD){const t=admin_state.groups.find(x=>x.name===g.name);if(t)t.members=t.members.filter(m=>m!==email);save();return;}try{await sb.from("group_members").delete().eq("group_id",g.id).eq("email",email);}catch(err){}}
+};
+
+/* ============ Navigation ============ */
+function go(v){
+  document.querySelectorAll(".view").forEach(s=>s.classList.remove("active"));
+  document.getElementById("view-"+v).classList.add("active");
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.v===v));
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(v==="learn")loadLesson(curLesson);
+  if(v==="board")renderBoard("global");
+  if(v==="profile")renderProfile();
+  if(v==="admin")admin.render();
+}
+document.getElementById("nav").addEventListener("click",e=>{if(e.target.dataset.v)go(e.target.dataset.v);});
+document.getElementById("lang").addEventListener("click",e=>{if(e.target.dataset.l){LANG=e.target.dataset.l;save();applyLang();}});
+
+/* ============ Apply language to UI ============ */
+function applyLang(){
+  const t=T[LANG];
+  document.querySelectorAll("#lang button").forEach(b=>b.classList.toggle("active",b.dataset.l===LANG));
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set("t_eyebrow",t.eyebrow);set("t_herotitle",t.herotitle);set("t_herosub",t.herosub);
+  set("t_startbtn",t.startbtn);set("t_gamebtn",t.gamebtn);set("t_lessonh",t.lessonh);set("t_lessonsmall",t.lessonsmall);
+  set("t_acc",t.acc);set("t_time",t.time);set("t_prog",t.prog);set("t_gameh",t.gameh);set("t_gamedesc",t.gamedesc);
+  set("t_words",t.words);set("t_boardh",t.boardh);set("t_global",t.global);set("t_group",t.group);
+  set("t_profh",t.profh);set("t_adminh",t.adminh);set("t_time2",t.time);
+  document.getElementById("t_kbhint").innerHTML=t.kbhint.replace("ko'k","<b style='color:var(--primary)'>ko'k</b>").replace("синим","<b style='color:var(--primary)'>синим</b>").replace("blue","<b style='color:var(--primary)'>blue</b>");
+  set("gBtn",t.start);
+  // home cards
+  document.getElementById("homeCards").innerHTML=t.cards.map(c=>`<div class="card"><div class="kico">${c[0]}</div><h3>${c[1]}</h3><p>${c[2]}</p></div>`).join("");
+  renderChips(); loadLesson(curLesson,true); buildKeyboard();
+  document.getElementById("ptsTop").textContent=profile.points;
+}
+
+/* ============ Lesson chips ============ */
+function renderChips(){
+  const box=document.getElementById("lessonChips");
+  box.innerHTML=LESSONS[LANG].map((l,i)=>`<button class="chip ${i===curLesson?'on':''}" onclick="loadLesson(${i})">${i+1}. ${l.t} ${i<profile.lessonsDone?'<span class=done>✓</span>':''}</button>`).join("");
+}
+
+/* ============ Keyboard render ============ */
+function buildKeyboard(highlight){
+  const layout=LANG==="ru"?CYR:LAT;
+  const kb=document.getElementById("kb");
+  kb.innerHTML="";
+  layout.forEach(row=>{
+    const r=document.createElement("div");r.className="krow";
+    row.forEach(([k,f])=>{
+      const el=document.createElement("div");el.className="key";el.dataset.k=k;
+      el.innerHTML=k+`<span class="fdot f${f}"></span>`;
+      r.appendChild(el);
+    });
+    kb.appendChild(r);
+  });
+  const sp=document.createElement("div");sp.className="krow";
+  const space=document.createElement("div");space.className="key space";space.dataset.k=" ";space.textContent="";
+  sp.appendChild(space);kb.appendChild(sp);
+  if(highlight)highlightKey(highlight);
+}
+function highlightKey(ch){
+  document.querySelectorAll(".key").forEach(k=>k.classList.remove("next"));
+  if(!ch)return;
+  const low=ch.toLowerCase();
+  document.querySelectorAll(".key").forEach(k=>{if(k.dataset.k===low)k.classList.add("next");});
+}
+
+/* ============ Typing engine ============ */
+let typing={target:"",idx:0,errors:0,typed:0,start:0,timer:null,active:false};
+const hidden=document.getElementById("hiddenInput");
+const promptEl=document.getElementById("prompt");
+
+function loadLesson(i,silent){
+  curLesson=i; if(curLesson>=LESSONS[LANG].length)curLesson=0;
+  const l=LESSONS[LANG][curLesson];
+  typing={target:l.x,idx:0,errors:0,typed:0,start:0,timer:null,active:false};
+  hidden.value="";
+  document.getElementById("resultCard").style.display="none";
+  renderPrompt(); renderChips();
+  document.getElementById("mWpm").textContent="0";
+  document.getElementById("mAcc").textContent="100%";
+  document.getElementById("mTime").textContent="0s";
+  document.getElementById("mProg").textContent="0%";
+  highlightKey(typing.target[0]);
+  if(!silent){promptEl.onclick=()=>hidden.focus();}
+}
+function renderPrompt(){
+  const tgt=typing.target,val=hidden.value;let html="";
+  for(let i=0;i<tgt.length;i++){
+    const ch=tgt[i]===" "?"&nbsp;":tgt[i];
+    let cls="";
+    if(i<val.length){cls=val[i]===tgt[i]?"ok":"bad";}
+    else if(i===val.length){cls="cur";}
+    html+=`<span class="${cls} ${tgt[i]===' '?'sp':''}">${ch}</span>`;
+  }
+  promptEl.innerHTML=html;
+}
+hidden.addEventListener("input",()=>{
+  const tgt=typing.target,val=hidden.value;
+  if(!typing.active){typing.active=true;typing.start=Date.now();tick();}
+  typing.typed=val.length;
+  // count errors against current length
+  let err=0,correct=0;
+  for(let i=0;i<val.length;i++){if(val[i]===tgt[i])correct++;else err++;}
+  typing.errors=err;
+  renderPrompt();
+  highlightKey(tgt[val.length]);
+  const acc=val.length?Math.max(0,Math.round((correct/val.length)*100)):100;
+  document.getElementById("mAcc").textContent=acc+"%";
+  document.getElementById("mProg").textContent=Math.round((val.length/tgt.length)*100)+"%";
+  if(val.length>=tgt.length){finishLesson(correct,acc);}
+});
+function tick(){
+  if(!typing.active)return;
+  const sec=(Date.now()-typing.start)/1000;
+  document.getElementById("mTime").textContent=Math.round(sec)+"s";
+  const words=hidden.value.length/5;
+  const wpm=sec>0?Math.round(words/(sec/60)):0;
+  document.getElementById("mWpm").textContent=wpm;
+  typing.timer=setTimeout(tick,200);
+}
+function finishLesson(correct,acc){
+  typing.active=false;clearTimeout(typing.timer);
+  highlightKey(null);
+  const sec=(Date.now()-typing.start)/1000;
+  const wpm=Math.max(1,Math.round((correct/5)/(sec/60)));
+  const l=LESSONS[LANG][curLesson];
+  const pts=Math.round(wpm*(acc/100)*l.d*2);
+  // update profile
+  profile.points+=pts; profile.sessions++; profile.accSum+=acc;
+  if(wpm>profile.bestWpm)profile.bestWpm=wpm;
+  if(curLesson>=profile.lessonsDone)profile.lessonsDone=curLesson+1;
+  if(!profile.baseline)profile.baseline={wpm,acc};
+  profile.latest={wpm,acc};
+  DB.saveScore(wpm,acc);
+  document.getElementById("ptsTop").textContent=profile.points;
+  showResult(wpm,acc,pts);
+}
+function showResult(wpm,acc,pts){
+  const t=T[LANG];const rc=document.getElementById("resultCard");
+  const b=profile.baseline;
+  let ba="";
+  if(b && profile.sessions>1){
+    const dw=wpm-b.wpm;
+    ba=`<div class="ba">
+      <div class="box"><div class="t">${t.before}</div><div class="n">${b.wpm}<span style="font-size:14px"> WPM</span></div><div style="color:var(--muted);font-family:JetBrains Mono">${b.acc}%</div></div>
+      <div class="arrow">→</div>
+      <div class="box"><div class="t">${t.after}</div><div class="n">${wpm}<span style="font-size:14px"> WPM</span></div><div style="color:var(--muted);font-family:JetBrains Mono">${acc}%</div></div>
+      <div class="arrow"><span class="delta">${dw>=0?'+':''}${dw} WPM</span></div>
+    </div>`;
+  }
+  const hasNext=curLesson<LESSONS[LANG].length-1;
+  rc.style.display="block";
+  rc.innerHTML=`<div class="result">
+    <div class="eyebrow">${t.finish}</div>
+    <div class="big">+${pts} <span style="font-size:20px;color:var(--accent)">★ ${t.earned}</span></div>
+    <div style="color:var(--muted);font-family:JetBrains Mono;font-size:16px">${wpm} WPM · ${acc}% ${t.acc}</div>
+    ${ba}
+    <div style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="ghost" onclick="loadLesson(${curLesson})">${t.retry}</button>
+      ${hasNext?`<button class="cta" onclick="loadLesson(${curLesson+1});window.scrollTo({top:0,behavior:'smooth'})">${t.next} →</button>`:`<button class="cta" onclick="go('profile')">🎓 ${t.profh}</button>`}
+    </div></div>`;
+  rc.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+/* ============ Game: time race ============ */
+const game={score:0,time:60,word:"",timer:null,
+ start(){
+   this.score=0;this.time=60;
+   document.getElementById("gScore").textContent=0;
+   const inp=document.getElementById("gInput");inp.disabled=false;inp.value="";inp.focus();
+   document.getElementById("gBtn").style.display="none";
+   this.next();
+   clearInterval(this.timer);
+   this.timer=setInterval(()=>{this.time--;document.getElementById("gTime").textContent=this.time+"s";if(this.time<=0)this.end();},1000);
+ },
+ next(){const arr=WORDS[LANG];this.word=arr[Math.floor(Math.random()*arr.length)];document.getElementById("gWord").textContent=this.word;},
+ end(){
+   clearInterval(this.timer);
+   const inp=document.getElementById("gInput");inp.disabled=true;
+   const pts=this.score*3;profile.points+=pts;DB.pushProfile();
+   document.getElementById("ptsTop").textContent=profile.points;
+   document.getElementById("gWord").textContent="🏁 +"+pts+" ★";
+   document.getElementById("gBtn").style.display="inline-flex";
+   document.getElementById("gBtn").textContent=T[LANG].retry;
+ }
+};
+document.getElementById("gInput").addEventListener("input",function(){
+  if(this.value.trim()===game.word){game.score++;document.getElementById("gScore").textContent=game.score;this.value="";game.next();}
+});
+
+/* ============ Leaderboard ============ */
+const DEMO=[{n:"Diyor",p:980},{n:"Sevara",p:870},{n:"Akmal",p:760},{n:"Madina",p:640},{n:"Bekzod",p:520},{n:"Nilufar",p:430}];
+document.getElementById("boardTabs").addEventListener("click",e=>{if(e.target.dataset.b){document.querySelectorAll("#boardTabs button").forEach(b=>b.classList.toggle("active",b===e.target));renderBoard(e.target.dataset.b);}});
+async function renderBoard(which){
+  document.getElementById("boardWrap").innerHTML=`<div class="note">Yuklanmoqda…</div>`;
+  let list=await DB.leaderboard(which);
+  list.sort((a,b)=>b.p-a.p);
+  const rows=list.map((u,i)=>{
+    const rk=i+1;const badge=rk<=3?`rank${rk}`:"";
+    return `<tr class="${u.me?'me':''}"><td><span class="rankbadge ${badge}">${rk}</span></td><td>${u.n}${u.me?' ←':''}</td><td class="num">${u.p}</td></tr>`;
+  }).join("");
+  const myRank=list.findIndex(u=>u.me)+1;
+  document.getElementById("boardWrap").innerHTML=
+    `<div class="note" style="margin-bottom:14px">${which==='group'?'Mening guruhim':'Global'}: siz <b>${myRank}-o'rindasiz</b> (${list.length} ishtirokchidan).</div>
+     <table><thead><tr><th style="width:60px">#</th><th>Ism</th><th class="num">Ball</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+/* ============ Profile ============ */
+function renderProfile(){
+  const avg=profile.sessions?Math.round(profile.accSum/profile.sessions):100;
+  const cards=[["★ Ball",profile.points],["⚡ Eng yaxshi WPM",profile.bestWpm],["🎯 O'rtacha aniqlik",avg+"%"],["✅ Darslar",profile.lessonsDone+"/"+LESSONS[LANG].length]];
+  document.getElementById("profStats").innerHTML=cards.map(c=>`<div class="card"><p style="font-size:13px;text-transform:uppercase;letter-spacing:.05em">${c[0]}</p><div style="font-family:JetBrains Mono;font-weight:700;font-size:30px;margin-top:6px">${c[1]}</div></div>`).join("");
+  const t=T[LANG];const b=profile.baseline,la=profile.latest;
+  const ba=document.getElementById("baCard");
+  if(b&&la){
+    const dw=la.wpm-b.wpm;
+    ba.innerHTML=`<div class="eyebrow">${t.before} → ${t.after}</div>
+      <div class="ba">
+       <div class="box"><div class="t">${t.before}</div><div class="n">${b.wpm}</div><div style="color:var(--muted);font-family:JetBrains Mono">${b.acc}% · WPM</div></div>
+       <div class="arrow">→</div>
+       <div class="box"><div class="t">${t.after}</div><div class="n">${la.wpm}</div><div style="color:var(--muted);font-family:JetBrains Mono">${la.acc}% · WPM</div></div>
+       <div class="arrow"><span class="delta">${dw>=0?'+':''}${dw} WPM</span></div>
+      </div>`;
+  } else {
+    ba.innerHTML=`<div class="eyebrow">${t.before} → ${t.after}</div><p style="color:var(--muted)">Birinchi mashqni bajaring — boshlang'ich natijangiz shu yerda saqlanadi.</p>`;
+  }
+}
+
+/* ============ Certificate ============ */
+function openCert(){
+  if(!profile.latest){alert("Avval kamida bitta mashqni tugating.");return;}
+  const id="GZ-"+Math.random().toString(36).slice(2,8).toUpperCase();
+  document.getElementById("certName").textContent=profile.name||"Foydalanuvchi";
+  document.getElementById("certMeta").textContent=`${profile.bestWpm} WPM · ${profile.latest.acc}% aniqlik`;
+  document.getElementById("certFoot").textContent=`typing.ganisher.uz · ${new Date().toLocaleDateString()} · ID: ${id}`;
+  const qr=document.getElementById("qr");qr.innerHTML="";
+  try{new QRCode(qr,{text:"https://typing.ganisher.uz/verify/"+id,width:64,height:64,colorDark:"#15172B"});}catch(e){qr.textContent="QR";}
+  document.getElementById("certModal").classList.add("on");
+}
+function downloadCert(){
+  const el=document.getElementById("certEl");
+  if(typeof html2canvas==="undefined"){window.print();return;}
+  html2canvas(el,{scale:2,backgroundColor:"#fff"}).then(c=>{const a=document.createElement("a");a.download="sertifikat.png";a.href=c.toDataURL();a.click();});
+}
+
+/* ============ Admin ============ */
+const admin={
+ _groups:[],
+ async render(){await this.renderEmails();await this.renderGroups();this.renderTg();},
+ async renderEmails(){const emails=await DB.listEmails();document.getElementById("emailList").innerHTML=emails.map(e=>`<span class="pill">${e}<button onclick="admin.delEmail('${e}')">×</button></span>`).join("")||"<span style='color:var(--muted)'>Hali email yo'q.</span>";},
+ async addEmail(){const inp=document.getElementById("emailInp");const v=inp.value.trim();if(v&&v.includes("@")){inp.value="";await DB.addEmail(v);await this.renderEmails();}},
+ async delEmail(e){await DB.delEmail(e);await this.renderEmails();},
+ async renderGroups(){const groups=await DB.listGroups();this._groups=groups;document.getElementById("groupList").innerHTML=groups.map((g,gi)=>`
+   <div class="panel" style="box-shadow:none;background:var(--bg2)">
+     <div style="display:flex;justify-content:space-between;align-items:center"><b>${g.name}</b><button class="btn danger" onclick="admin.delGroup(${gi})">O'chirish</button></div>
+     <div style="margin:10px 0">${g.members.map(m=>`<span class="pill">${m}<button onclick="admin.delMember(${gi},'${m}')">×</button></span>`).join("")||"<span style='color:var(--muted)'>O'quvchi yo'q</span>"}</div>
+     <div class="row"><input class="inp" id="gm${gi}" placeholder="o'quvchi emaili"><button class="btn soft" onclick="admin.addMember(${gi})">Qo'shish</button></div>
+   </div>`).join("");},
+ async addGroup(){const inp=document.getElementById("groupInp");const v=inp.value.trim();if(v){inp.value="";await DB.addGroup(v);await this.renderGroups();}},
+ async delGroup(gi){await DB.delGroup(this._groups[gi]);await this.renderGroups();},
+ async addMember(gi){const inp=document.getElementById("gm"+gi);const v=inp.value.trim();if(v){await DB.addMember(this._groups[gi],v);await this.renderGroups();}},
+ async delMember(gi,email){await DB.delMember(this._groups[gi],email);await this.renderGroups();},
+ renderTg(){const sw=document.getElementById("tgSwitch");sw.classList.toggle("on",admin_state.tg);document.getElementById("tgLabel").textContent=admin_state.tg?"Yoqilgan":"O'chiq";},
+ toggleTg(){admin_state.tg=!admin_state.tg;save();this.renderTg();},
+ exportCsv(){let rows=[["Guruh","Email"]];this._groups.forEach(g=>g.members.forEach(m=>rows.push([g.name,m])));const csv=rows.map(r=>r.join(",")).join("\n");const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="guruhlar.csv";a.click();}
+};
+
+/* ============ Init ============ */
+applyLang();
+buildKeyboard();
+initAuth();
+</script>
+</body>
+</html>
